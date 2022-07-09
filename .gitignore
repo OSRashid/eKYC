@@ -1,0 +1,29 @@
+# Build and Release Folders
+__pycache__
+
+# Other files and folders
+.vscode
+env
+dataset
+IDs
+selfies
+model
+migrations
+tmp
+*.h5
+.vs
+haarcascade
+opencv_dnn
+*.xlsx
+*.csv
+*.ipynb
+excelParser.py
+utils/dlib
+detector
+output
+*.pt
+# Executables
+
+# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
+# should NOT be excluded as they contain compiler settings and other important
+# information for Eclipse / Flash Builder.
