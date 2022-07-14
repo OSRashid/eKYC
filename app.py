@@ -15,8 +15,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://kyc:kyc_password@localhost
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'secret key'
 
-db.init_app(app)
-migrate = Migrate(app, db)
+# db.init_app(app)
+# migrate = Migrate(app, db)
 
 
 @app.post('/verify')
