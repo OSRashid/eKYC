@@ -551,11 +551,14 @@ def loadModel(dimension=128):
 		url = 'https://github.com/serengil/deepface_models/releases/download/v1.0/facenet512_weights.h5'
 	home = os.getcwd()
 	model = InceptionResNetV2(dimension)
-	if os.path.isfile(os.path.join(home,'facenet_weights.h5')) != True:
-		output = os.path.join(home,'facenet_weights.h5')
-		gdown.download(url, output, quiet=False)
+	
 	if dimension == 128:
-		model.load_weights('utils/facenet_weights.h5')
+		if os.path.isfile(os.path.join(home,'facenet_weights.h5')) != True:
+			output = os.path.join(home,'utils/facenet_weights.h5')
+			gdown.download(url, output, quiet=False)
+		model.load_weights(os.path.join(home,'utils/facenet_weights.h5'))
 	elif dimension == 512:
-		model.load_weights('utils/facenet512_weights.h5')
+		if os.path.isfile(os.path.join(home,'facenet512_weights.h5')) != True:
+			output = os.path.join(home,'utils/facenet512_weights.h5')
+		model.load_weights(os.path.join(home,'utils/facenet512_weights.h5'))
 	return model
