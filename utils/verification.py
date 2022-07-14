@@ -37,7 +37,7 @@ def preprocessing(img,target_size=(160,160)):
             # Then pad the other side to the target size by adding black pixels
             diff_0 = target_size[0] - face_resized.shape[0]
             diff_1 = target_size[1] - face_resized.shape[1]
-            face_resized = np.pad(img, ((diff_0 // 2, diff_0 - diff_0 // 2), (diff_1 // 2, diff_1 - diff_1 // 2), (0, 0)), 'constant')
+            face_resized = np.pad(face_resized, ((diff_0 // 2, diff_0 - diff_0 // 2), (diff_1 // 2, diff_1 - diff_1 // 2), (0, 0)), 'constant')
 
         if face_resized.shape[0:2] != target_size:
             face_resized = cv2.resize(face_resized, target_size)
@@ -45,11 +45,10 @@ def preprocessing(img,target_size=(160,160)):
         face_resized = np.expand_dims(face_resized, axis = 0)
         mean, std = face_resized.mean(), face_resized.std() #facenet
         face_processed = (face_resized - mean) / std  #facenet
-    face = Image.fromarray(np.uint8(face)).convert('RGB')
+    face = Image.fromarray(cv2.cvtColor(face,cv2.COLOR_BGR2RGB))
     return face, face_processed
 
 def verifyUser(document, selfie):
-    # 1) preprocess face
     if document is not None and selfie is not None:
         _, document = preprocessing(document,target_size=input_shape)
         face, selfie = preprocessing(selfie,target_size=input_shape)
@@ -62,7 +61,7 @@ def verifyUser(document, selfie):
         distance = findEuclideanDistance(document_representation, selfie_representation)
         distance = np.float64(distance)
         # 3) decide
-        threshold = 10
+        threshold = 11
         if distance <= threshold:
             identified = True
         else:
@@ -75,7 +74,7 @@ def verifyUser(document, selfie):
         "distance": distance,
         "threshold": threshold,
         'live': live,
-        'liveProb': liveProb.item()
+        'liveProb': liveProb,
     }
     return verification
    

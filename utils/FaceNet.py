@@ -34,7 +34,6 @@ def scaling(x, scale):
 	return x * scale
 
 def InceptionResNetV2(dimension = 128):
-
 	inputs = Input(shape=(160, 160, 3))
 	x = Conv2D(32, 3, strides=2, padding='valid', use_bias=False, name= 'Conv2d_1a_3x3') (inputs)
 	x = BatchNormalization(axis=3, momentum=0.995, epsilon=0.001, scale=False, name='Conv2d_1a_3x3_BatchNorm')(x)

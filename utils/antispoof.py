@@ -1,9 +1,9 @@
 import torch.nn as nn
 import torch.nn.functional as F
-from torchvision.models.resnet import resnet18
+from torchvision.models.resnet import resnet18 #,resnet50
 from torchvision import transforms
 import torch
-import copy
+from PIL import Image
 
 class PatchNet(nn.Module):
     def __init__(self):
@@ -23,10 +23,25 @@ class PatchNet(nn.Module):
         return x
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+class NewPad(object):
+    def __init__(self):
+        pass
+        
+    def __call__(self, img, x_size=180, y_size=180):
+        width, height = img.size
+        pad_width = max(x_size,width)
+        pad_height = max(y_size, height)
+        left = (pad_width - width)//2
+        top = (pad_height - height)//2
+        new_img = Image.new(img.mode,(pad_width,pad_height),(0,0,0))
+        new_img.paste(img,(left,top))
+        return new_img
+
 transform = transforms.Compose([
+    NewPad(),
     transforms.RandomRotation(180),
     transforms.RandomHorizontalFlip(p=0.5),
-    transforms.RandomResizedCrop(160),
+    transforms.RandomCrop(160),
     transforms.ToTensor(),
 ])
 
@@ -37,10 +52,41 @@ def antispoof(img, p=9):
     output = torch.tensor([])
     for _ in range(p):
         patch = transform(img)
-        out = model(patch.unsqueeze(0))
+        with torch.no_grad():
+            out = model(patch.unsqueeze(0))
         output = torch.cat((output,out),dim=0)
     average_prob = torch.mean(output,dim=0)
     liveProb = average_prob[0]+average_prob[1]+average_prob[6]
-    return liveProb
-    
+    return liveProb.item()
+
+
+
+# midas_transforms = torch.hub.load("intel-isl/MiDaS", "transforms")
+# model_type = "DPT_Large"     # MiDaS v3 - Large     (highest accuracy, slowest inference speed)
+# #model_type = "DPT_Hybrid"   # MiDaS v3 - Hybrid    (medium accuracy, medium inference speed)
+# #model_type = "MiDaS_small"  # MiDaS v2.1 - Small   (lowest accuracy, highest inference speed)
+# midas = torch.hub.load("intel-isl/MiDaS", model_type)
+# midas.to(device)
+# midas.eval()
+# if model_type == "DPT_Large" or model_type == "DPT_Hybrid":
+#     midas_transform = midas_transforms.dpt_transform
+# else:
+#     midas_transform = midas_transforms.small_transform
+
+
+# randomCrop = transforms.RandomResizedCrop(160)
+# def facemap(img):
+#     img = randomCrop(img)
+#     img = np.asarray(img)
+#     patch = midas_transform(img)
+#     with torch.no_grad():
+#         preds = midas(patch)
+#         preds = F.interpolate(
+#             preds.unsqueeze(1),
+#             size=img.shape[:2],
+#             mode='bicubic',
+#             align_corners=False
+#         ).squeeze()
+#     output = preds.cpu().numpy()
+#     return output
 

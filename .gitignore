@@ -22,6 +22,8 @@ utils/dlib
 detector
 output
 *.pt
+test/live/
+test/spoof/
 # Executables
 
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
