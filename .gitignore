@@ -21,7 +21,6 @@ excelParser.py
 utils/dlib
 detector
 output
-*.pt
 test/live/
 test/spoof/
 # Executables
