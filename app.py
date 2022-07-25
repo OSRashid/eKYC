@@ -36,9 +36,6 @@ class Item:
         self.document = document
 
 
-@app.post('/signup')
-async def signup(name: str, db: Session = Depends(get_db)):
-    create_customer(db,name)
 
 @app.post('/verify')
 async def verify(request: Request,item: Item = Depends(), db: Session = Depends(get_db)):
